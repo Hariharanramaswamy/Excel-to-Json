@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Excel Viewer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --primary: #3b82f6;
+      --bg: #f9fafb;
+      --text: #111827;
+      --gray: #6b7280;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      margin-bottom: 1rem;
+      color: var(--primary);
+      font-size: 2rem;
+    }
+
+    form {
+      background: white;
+      padding: 1.5rem 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    input[type="file"] {
+      font-size: 1rem;
+    }
+
+    button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.7rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #2563eb;
+    }
+
+    .sheet {
+      margin-top: 1rem;
+      width: 100%;
+      max-width: 800px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      padding: 1rem;
+    }
+
+    .sheet h2 {
+      font-size: 1.2rem;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    pre {
+      background: #f3f4f6;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 0.95rem;
+      color: var(--gray);
+    }
+    .output-container {
+    max-width: 800px;
+    margin: 0 auto; /* center horizontally */
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    white-space: pre-wrap;  /* make sure text wraps nicely */
+    font-family: monospace;
+    color: #333;
+    overflow-x: auto;  /* horizontal scroll if needed */
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Excel Content Viewer</h1>
+
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="excel" accept=".xlsx, .xls" required />
+    <button type="submit">Upload and View</button>
+  </form>
+
+   <div class="output-container">
+  <div id="output"></div>
+</div>
+
+  <script>
+    const form = document.getElementById('uploadForm');
+    const output = document.getElementById('output');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      output.innerHTML = '';
+
+      const response = await fetch('/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        
+        output.textContent = JSON.stringify(data, null, 2);
+      } else {
+        output.innerHTML = `<p style="color:red;">Upload failed. Please try again.</p>`;
+      }
+    });
+  </script>
+
+</body>
+</html>
